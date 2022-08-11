@@ -72,17 +72,17 @@ public class UtilsPanelsLoader implements Listener {
     }
 
     @EventHandler
-    public void onInventoryItemClick(InventoryClickEvent e){
+    public void onInventoryItemClick(InventoryClickEvent inventoryClickEvent){
         //this will check to ensure an item is not from CommandPanels on inventory open
-        Player p = (Player)e.getWhoClicked();
-        if(!plugin.openPanels.hasPanelOpen(p.getName(),PanelPosition.Top)){
-            for(ItemStack itm : p.getInventory().getContents()){
-                if(plugin.openPanels.isNBTInjected(itm)){
-                    p.getInventory().remove(itm);
+        // optimized this event on 8/10/2022 to prevent lag/high cpu usage from this plugin on higher player counts.
+        Player player = (Player) inventoryClickEvent.getWhoClicked();
+        if(!plugin.openPanels.hasPanelOpen(player.getName(),PanelPosition.Top)) {
+            ItemStack clickedItem = inventoryClickEvent.getCurrentItem();
+            if (plugin.openPanels.isNBTInjected(clickedItem)){
+                player.getInventory().remove(clickedItem);
                 }
             }
         }
-    }
 
     //if the regular InventoryOpenEvent is called
     @EventHandler(priority = EventPriority.HIGHEST)
